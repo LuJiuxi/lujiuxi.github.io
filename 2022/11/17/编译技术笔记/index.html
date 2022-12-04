@@ -1,16 +1,16 @@
-<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>编译技术笔记 | suyang's blog</title><meta name="author" content="玖曦"><meta name="copyright" content="玖曦"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="一、概论(一)基本概念 源程序：用汇编语言或高级语言编写的程序称为源程序  目标程序：用目标语言所表示的程序。  目标语言：可以是介于源语言和机器语言之间的 “中间语言”，可以是某种机器的机器语言，也可以是某机器的汇编语言   翻译程序：将源程序转换为目标程序的程序称为翻译程序。 它是指各种语言的翻译器，包括汇编程序和编译程序，是汇编程序、编译程序以及各种变换程序的总称  汇编程序：若源程序用汇编">
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>编译技术笔记 | suyang's blog</title><meta name="author" content="玖曦"><meta name="copyright" content="玖曦"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="零、重要知识点索引 乔姆斯基文法体系 短语的查找 NFA的确定化 DFA的极小化 消除左递归的方法 消除回溯的途径 不带回溯的充分必要条件 FIRST集的计算 FOLLOW集的计算 LL(1)分析表的构造 算符优先文法：优先关系的定义 素短语 构造优先关系矩阵 LR分析方法 建造display区的规则 算法：划分基本块 消除公共子表达式算法 从DAG导出中间代码的启发式算法 基本块的活跃变量数据流">
 <meta property="og:type" content="article">
 <meta property="og:title" content="编译技术笔记">
 <meta property="og:url" content="https://lujiuxi.github.io/2022/11/17/%E7%BC%96%E8%AF%91%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="suyang&#39;s blog">
-<meta property="og:description" content="一、概论(一)基本概念 源程序：用汇编语言或高级语言编写的程序称为源程序  目标程序：用目标语言所表示的程序。  目标语言：可以是介于源语言和机器语言之间的 “中间语言”，可以是某种机器的机器语言，也可以是某机器的汇编语言   翻译程序：将源程序转换为目标程序的程序称为翻译程序。 它是指各种语言的翻译器，包括汇编程序和编译程序，是汇编程序、编译程序以及各种变换程序的总称  汇编程序：若源程序用汇编">
+<meta property="og:description" content="零、重要知识点索引 乔姆斯基文法体系 短语的查找 NFA的确定化 DFA的极小化 消除左递归的方法 消除回溯的途径 不带回溯的充分必要条件 FIRST集的计算 FOLLOW集的计算 LL(1)分析表的构造 算符优先文法：优先关系的定义 素短语 构造优先关系矩阵 LR分析方法 建造display区的规则 算法：划分基本块 消除公共子表达式算法 从DAG导出中间代码的启发式算法 基本块的活跃变量数据流">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://lujiuxi.github.io/img/default_cover3.jpg">
+<meta property="og:image" content="https://lujiuxi.github.io/img/default_cover5.jpg">
 <meta property="article:published_time" content="2022-11-17T15:54:16.000Z">
-<meta property="article:modified_time" content="2022-12-03T09:39:45.721Z">
+<meta property="article:modified_time" content="2022-12-04T12:28:46.811Z">
 <meta property="article:author" content="玖曦">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://lujiuxi.github.io/img/default_cover3.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lujiuxi.github.io/2022/11/17/%E7%BC%96%E8%AF%91%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+<meta name="twitter:image" content="https://lujiuxi.github.io/img/default_cover5.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lujiuxi.github.io/2022/11/17/%E7%BC%96%E8%AF%91%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
   root: '/',
   algolia: undefined,
   localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
@@ -52,7 +52,7 @@
   isHome: false,
   isHighlightShrink: false,
   isToc: true,
-  postUpdate: '2022-12-03 17:39:45'
+  postUpdate: '2022-12-04 20:28:46'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -141,7 +141,32 @@
       }
     }
     detectApple()
-    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover3.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">suyang's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">编译技术笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-11-17T15:54:16.000Z" title="Created 2022-11-17 23:54:16">2022-11-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-12-03T09:39:45.721Z" title="Updated 2022-12-03 17:39:45">2022-12-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="编译技术笔记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="一、概论"><a href="#一、概论" class="headerlink" title="一、概论"></a>一、概论</h1><h2 id="一-基本概念"><a href="#一-基本概念" class="headerlink" title="(一)基本概念"></a>(一)基本概念</h2><ul>
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">Loading...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">3</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover5.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">suyang's blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">编译技术笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-11-17T15:54:16.000Z" title="Created 2022-11-17 23:54:16">2022-11-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-12-04T12:28:46.811Z" title="Updated 2022-12-04 20:28:46">2022-12-04</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="编译技术笔记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="零、重要知识点索引"><a href="#零、重要知识点索引" class="headerlink" title="零、重要知识点索引"></a>零、重要知识点索引</h1><ul>
+<li><a href="#乔姆斯基文法体系">乔姆斯基文法体系</a></li>
+<li><a href="#短语的查找方案">短语的查找</a></li>
+<li><a href="#NFA的确定化">NFA的确定化</a></li>
+<li><a href="#DFA的极小化">DFA的极小化</a></li>
+<li><a href="#消除左递归的方法">消除左递归的方法</a></li>
+<li><a href="#消除回溯的途径">消除回溯的途径</a></li>
+<li><a href="#不带回溯的充分必要条件">不带回溯的充分必要条件</a></li>
+<li><a href="#FIRST集的计算">FIRST集的计算</a></li>
+<li><a href="#FOLLOW集的计算">FOLLOW集的计算</a></li>
+<li><a href="#分析表的构造">LL(1)分析表的构造</a></li>
+<li><a href="#优先关系的定义">算符优先文法：优先关系的定义</a></li>
+<li><a href="#素短语">素短语</a></li>
+<li><a href="#构造优先关系矩阵">构造优先关系矩阵</a></li>
+<li><a href="#LR分析方法">LR分析方法</a></li>
+<li><a href="#建造display区的规则">建造display区的规则</a></li>
+<li><a href="#算法：划分基本块">算法：划分基本块</a></li>
+<li><a href="#消除公共子表达式算法">消除公共子表达式算法</a></li>
+<li><a href="#从DAG导出中间代码的启发式算法">从DAG导出中间代码的启发式算法</a></li>
+<li><a href="#基本块的活跃变量数据流分析 （基本思路：迭代）">基本块的活跃变量数据流分析（基本思路：迭代）</a></li>
+<li><a href="#算法：基本块的到达定义数据流分析（迭代思想）">算法：基本块的到达定义数据流分析（迭代思想）</a></li>
+<li><a href="#用数据流计算支配属性">用数据流计算支配属性</a></li>
+<li><a href="#寄存器分配：图着色算法">寄存器分配：图着色算法</a></li>
+<li><a href="#指令集架构">指令集架构</a></li>
+</ul>
+<h1 id="一、概论"><a href="#一、概论" class="headerlink" title="一、概论"></a>一、概论</h1><h2 id="一-基本概念"><a href="#一-基本概念" class="headerlink" title="(一)基本概念"></a>(一)基本概念</h2><ul>
 <li><p>源程序：用<strong>汇编语言</strong>或<strong>高级语言</strong>编写的程序称为源程序</p>
 </li>
 <li><p>目标程序：用<strong>目标语言</strong>所表示的程序。</p>
@@ -304,7 +329,7 @@
 <li>左递归文法的缺点：不能用自顶向下的方法来进行语法分析</li>
 </ul>
 <h2 id="四-文法构造"><a href="#四-文法构造" class="headerlink" title="(四)文法构造"></a>(四)文法构造</h2><ul>
-<li>不是重点，先跳过 // TODO</li>
+<li>略，玄学问题</li>
 </ul>
 <h2 id="五-短语、简单短语和句柄（重点）"><a href="#五-短语、简单短语和句柄（重点）" class="headerlink" title="(五)短语、简单短语和句柄（重点）"></a>(五)短语、简单短语和句柄（重点）</h2><ul>
 <li><p>给定文法$G[Z]$，$w = xuy∈V^+$，为该文法的句型</p>
@@ -346,9 +371,8 @@
 <li><p>4、树与推导</p>
 </li>
 <li><p>由推导构造语法树</p>
-<pre><code>  - 从识别符号开始，自左向右建立推导序列。 
-  - 由根结点开始，自上而下建立语法树
-</code></pre><ul>
+<ul>
+<li>从识别符号开始，自左向右建立推导序列，由根结点开始，自上而下建立语法树</li>
 <li>由语法树构造推导<ul>
 <li>自下而上地修剪子树的某些末端结点（短语），直至 把整棵树剪掉（留根），每剪一次对应一次归约</li>
 <li>从句型开始，自右向左地逐步进行归约，建立推导序列</li>
@@ -524,7 +548,7 @@
 <li>交换律: $e1 | e2 = e2 | e1 $</li>
 <li>结合律: $e1|(e2|e3) = (e1|e2)|e3  e1(e2e3) = (e1e2)e3 $</li>
 <li>分配律:<script type="math/tex">e1(e2|e3) = e1e2|e1e3  (e1|e2)e3 = e1e3|e2e3</script></li>
-<li>此外:$ r^<em> = (r|\varepsilon)^</em>\quad r^{<em>*}=r^</em> (r|s)^<em> = (r^</em>s^<em>)^</em>$</li>
+<li>此外:$ r^<em> = (r|\varepsilon)^</em>\quad r^{<em>*}=r^</em> (r|s)^<em> = (r^</em>s^<em>)^</em> $</li>
 </ul>
 </li>
 </ul>
@@ -674,7 +698,7 @@
 </ul>
 <h4 id="2-回溯问题"><a href="#2-回溯问题" class="headerlink" title="(2)回溯问题"></a>(2)回溯问题</h4><ul>
 <li>造成回溯的条件：文法中，对于某个非终结符号的规则其右部 有多个选择，并根据所面临的输入符号不能准确 地确定所要的选择时，就可能出现回溯</li>
-<li>定义$\operatorname{FIRST}\left(\alpha_i\right)=\left{a \mid \alpha_i \stackrel{*}{\Rightarrow} a \ldots, a \in V_t\right}$</li>
+<li>定义$\operatorname{FIRST}\alpha_i={a \mid \alpha_i \stackrel{*}{\Rightarrow} a \ldots, a \in V_t}$</li>
 <li>为避免回溯, 对文法的要求是:<br>  $\operatorname{FIRST}\left(\alpha_i\right) \cap \operatorname{FIRST}\left(\alpha_j\right)=\varphi(i \neq j)$</li>
 </ul>
 <hr>
@@ -702,14 +726,14 @@
 <li><p>对文法的任一非终结符，若其规则右部有多个选择时， 各选择所推出的终结符号串的首符号集合要两两不相交</p>
 </li>
 <li><p>定义</p>
-<p>  $\operatorname{FOLLOW}(\mathbf{A})=\left{\mathbf{a} \mid \mathbf{Z} \stackrel{<em>}{\Rightarrow} \ldots \ldots \mathbf{A a} \ldots, \quad \mathbf{a} \in \mathbf{V}<em>t\right}$<br>  $\mathbf{A} \in \mathbf{V}</em>{\mathbf{n}}, \mathbf{Z}$ 识别符号<br>  该集合称为 $\mathrm{A}$ 的后继符号集合。<br>  特殊地: 若 $Z \stackrel{</em>}{\Rightarrow} \ldots A$ 则 # $\in FOLLOW(A)$</p>
+<p>  $\operatorname{FOLLOW}(\mathbf{A})=\left{\mathbf{a} \mid \mathbf{Z} \stackrel{<em>}{\Rightarrow} \ldots \ldots \mathbf{A a} \ldots, \quad \mathbf{a} \in \mathbf{V}<em>t\right}\mathbf{A} \in \mathbf{V}</em>{\mathbf{n}}, \mathbf{Z}$ 识别符号，该集合称为 $\mathrm{A}$ 的后继符号集合。<br>  特殊地: 若 $Z \stackrel{</em>}{\Rightarrow} \ldots A$则#$\in FOLLOW(A)$</p>
 </li>
 <li><p><span id = "不带回溯的充分必要条件"><strong>不带回溯的充分必要条件</strong></span>是：对于G的 每一个非终结符A的任意两条规则$A::=α|β$,下列条件成立：</p>
 <ul>
 <li>$FIRST(α) ∩ FIRST(β) = \empty$</li>
-<li>$若β\overset{*}{\Longrightarrow}ε, 则FIRST(α) ∩ FOLLOW(A) = \empty$</li>
 </ul>
 </li>
+<li>若$β\overset{*}{\Longrightarrow}ε, 则FIRST(α) ∩ FOLLOW(A) = \empty$</li>
 </ul>
 </li>
 </ul>
@@ -762,14 +786,20 @@
 <li><p>执行程序 (总控程序） </p>
 <ul>
 <li>执行程序主要实现如下操作：<pre><code>  - 把#和文法识别符号E推进栈, 读入下一个符号， 重复下述过程直到正常结束或出错。
-  - 测定栈顶符号X和当前输入符号a,执行如下操作:
-      - 1、若$X=a=$ #，分析成功，停止。E匹配输入串成功。 
-      - 2、若$X=a≠$ #，把X推出栈，再读入下一个符号。 
-      - 3、若$X∈V_n$，查分析表M。
-          - a) $M[X,a] = X∷= UVW$ 则将X弹出栈，将$UVW$压入 注：$U$在栈顶 （最左推导） 
-          - b) $M[X, a] = error $转出错处理 
-          - c) $M[X, a] = X::=ε$，——$a$为$X$的后继符号则将$X$弹出栈 (不读下一符号) 继续分析。
-</code></pre></li>
+</code></pre><ul>
+<li>测定栈顶符号X和当前输入符号a,执行如下操作:<ul>
+<li>1、若$X=a=$ #，分析成功，停止。E匹配输入串成功。 </li>
+<li>2、若$X=a≠$ #，把X推出栈，再读入下一个符号。 </li>
+<li>3、若$X∈V_n$，查分析表M。<ul>
+<li>a) $M[X,a] = X∷= UVW$ 则将X弹出栈，将$UVW$压入 注：$U$在栈顶 （最左推导） </li>
+<li>b) $M[X, a] = error $转出错处理 </li>
+<li>c) $M[X, a] = X::=ε$，——$a$为$X$的后继符号则将$X$弹出栈 (不读下一符号) 继续分析。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><p>符号栈 （分析栈）</p>
@@ -806,7 +836,169 @@
 <p>  <img src="https://s3.uuu.ovh/imgs/2022/12/02/22c64b957d66707b.jpg" alt=""></p>
 </li>
 </ul>
-<h2 id="三-自底向上分析"><a href="#三-自底向上分析" class="headerlink" title="(三)自底向上分析"></a>(三)自底向上分析</h2><h3 id="1、LR分析方法"><a href="#1、LR分析方法" class="headerlink" title="1、LR分析方法"></a>1、LR分析方法</h3><h4 id="1-LR-0-分析法"><a href="#1-LR-0-分析法" class="headerlink" title="(1)LR(0)分析法"></a>(1)LR(0)分析法</h4><h4 id="2-LR-0-的局限性"><a href="#2-LR-0-的局限性" class="headerlink" title="(2)LR(0)的局限性"></a>(2)LR(0)的局限性</h4><ul>
+<h2 id="三-自底向上分析"><a href="#三-自底向上分析" class="headerlink" title="(三)自底向上分析"></a>(三)自底向上分析</h2><ul>
+<li>移进—归约分析（Shift-Reduce Parsing) </li>
+<li>要点：建立符号栈，用来记录分析的历史和现状，并根据所面临的状态，确定下一步动作是移进还是归约</li>
+</ul>
+<h3 id="1、算符优先分析-Operator-Precedence-Parsing"><a href="#1、算符优先分析-Operator-Precedence-Parsing" class="headerlink" title="1、算符优先分析(Operator-Precedence Parsing)"></a>1、算符优先分析(Operator-Precedence Parsing)</h3><ul>
+<li><p>这是一种经典的自底向上分析法，简单直观，并被广泛使 用，开始主要是对表达式的分析，现在已不限于此。可以 用于一大类上下无关的文法</p>
+</li>
+<li><p>称为算符优先分析是因为这种方法是仿效算术式的四则运算 而建立起来的，作算术式的四则运算时，为了保证计算结果 和过程的唯一性，规定了一个统一的四则运算法则，规定运 算符之间的优先关系</p>
+</li>
+<li><p>算符优先分析的特点：仿效四则运算过程，预先规定相邻终结符之间的优 先关系，然后利用这种优先关系来确定句型的“句柄” ， 并进行归约</p>
+</li>
+<li><p>分析器结构：</p>
+<p>  <img src="https://s3.uuu.ovh/imgs/2022/12/04/35d3eea179b3095a.jpg" alt=""></p>
+</li>
+<li><p>终结符之间的优先关系</p>
+<p>  设$a，b$为可能相邻的终结符</p>
+<ul>
+<li>$a=b$，优先级相等，栈内$a$、栈外$b$抵消</li>
+<li>$a&lt;b$，$b$的优先级高，栈外$b$移进</li>
+<li>$a&gt;b$，$a$的优先级高，栈内$a$规约</li>
+</ul>
+</li>
+</ul>
+<h3 id="2、算符优先文法"><a href="#2、算符优先文法" class="headerlink" title="2、算符优先文法"></a>2、算符优先文法</h3><ul>
+<li><p>若文法中无形如$U::=VW,\quad V、W\in V_n$的规则，则称文法为OG文法，也就是算符文法。</p>
+</li>
+<li><p><span id = "优先关系的定义"><strong>优先关系的定义</strong></span></p>
+<ul>
+<li><p>$a=b$，文法中有形如$U:==…ab…或U::=aVb$的规则</p>
+</li>
+<li><p>$a&lt;b$，文法中有形如$U::=…aW…$的规则，其中$W\overset{+}{\Longrightarrow}b…或W\overset{+}{\Longrightarrow}Vb…$</p>
+<p>  $a$的后面有非终结符$W$，向后遇到$W$第一个终结符$b$时，应该先移进，以适用本条规则</p>
+</li>
+<li><p>$a&gt;b$，文法中有形如$U::=…Wb…$的规则，其中$W\overset{+}{\Longrightarrow}…a或W\overset{+}{\Longrightarrow}…aV$</p>
+<p>  $W$的后面有终结符$b$，$W$的最后一个终结符$a$向后遇到$b$时，应该先规约，以适用本条规则</p>
+</li>
+</ul>
+</li>
+<li><p><span id = "构造优先关系矩阵"><strong>构造优先关系矩阵</strong></span></p>
+<ul>
+<li>求 “ $=$ ” 检查每一条规则，若有$U::=…ab…或 U::=…aVb…$, 则 $a=b$</li>
+<li>求“ $&lt;$”、“$ &gt; $” ，需定义两个集合<ul>
+<li>$FIRSTVT(U)={b|U\overset{+}{\Longrightarrow}b…或U\overset{+}{\Longrightarrow}Vb…}$<ul>
+<li>若有规则$U∷= b…$或$U∷= Vb…(存在U<em>+\Rightarrow b…或U</em>+\Rightarrow Vb…) $则$b∈FIRSTVT(U)$</li>
+<li>若有规则$U∷= V…$且$b∈FIRSTVT(V)$，则$b∈FIRSTVT(U)$</li>
+</ul>
+</li>
+<li>$LASTVT(U)={a|U\overset{+}{\Longrightarrow}…a或U\overset{+}{\Longrightarrow}…aV}$<ul>
+<li>若有规则$U::=…a$或$U::=…aV$,则$a∈LASTVT(U)$</li>
+<li>若有规则$U::=…V$,且$a∈LASTVT(V)$, 则$a∈LASTVT(U)$</li>
+</ul>
+</li>
+<li>若有文法规则$W::=…aU…$，则对任何$b\in FIRSTVT(U),a&lt;b$</li>
+<li>若有文法规则$W::=…Ub…$，则对任何$a\in LASTVT(U),a&gt;b$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><span id = "素短语"><strong>素短语</strong></span></p>
+<p>  文法G的句型的素短语是一个短语，它至少包含有一个终结符号，并且除它自身以外不再包含其他素短语</p>
+</li>
+</ul>
+<h3 id="3、LR分析方法"><a href="#3、LR分析方法" class="headerlink" title="3、LR分析方法"></a>3、<span id = "LR分析方法">LR分析方法</span></h3><ul>
+<li><p>规范句型: 通过<strong>规范归约</strong>（Right-most）得到的句型</p>
+</li>
+<li><p>规范句型前缀: 将输入串的剩余部分与其连接起来就<strong>构成了规范句型</strong></p>
+</li>
+<li><p>活前缀: 若分析过程能够保证栈中符号串均是规范句型的前缀，则表示输入串已分析过的部分没有语法错误，所以称为规范句型的活前缀</p>
+<ul>
+<li><p>对于句型$αβt$，$ β$表示句柄, 如果$αβ= u_1u_2…u_r $那么符号串$u_1u_2…u_i(1≤i≤r)$ 即是句型$αβt$的活前缀</p>
+<p><img src="https://s3.uuu.ovh/imgs/2022/12/04/17c744c6291674ed.jpg" alt=""></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="1-LR-0-分析法"><a href="#1-LR-0-分析法" class="headerlink" title="(1)LR(0)分析法"></a>(1)LR(0)分析法</h4><ul>
+<li><p>分析表</p>
+<ul>
+<li><p>状态转移表 (GOTO表)</p>
+<ul>
+<li>$GOTO[S_{i-1}, x_i]=S_i$<ul>
+<li>$S_{i-1}$—-当前状态(栈顶状态) </li>
+<li>$x_i$—- 新的栈顶符号 </li>
+<li>$S_i$——新的栈顶状态(状态转移)</li>
+</ul>
+</li>
+<li><p>$Si$需要满足条件是: 每一步识别的都是“活前缀”</p>
+<p><img src="https://s3.uuu.ovh/imgs/2022/12/04/9837e5c9624965e9.jpg" alt=""></p>
+</li>
+</ul>
+</li>
+<li><p>分析动作表(ACTION表) – 移进？规约？</p>
+<p>  $ACTION[S_i,a] = $分析动作$ a∈V_t$</p>
+<p>  <img src="https://s3.uuu.ovh/imgs/2022/12/04/7e1bbc20528d7004.jpg" alt=""></p>
+</li>
+</ul>
+</li>
+<li><p>分析动作：</p>
+<ul>
+<li><p>(1) 移进(shift) </p>
+<p>  $ACTION[S_i,a] = s$ （s表示 shift，移进） </p>
+<p>  动作: 将$a$推进栈，并设置新的栈顶状态$S_i,S_j= GOTO[S_i,a]$，将指针指向下一个输入符号</p>
+</li>
+<li><p>(2) 归约(reduce)</p>
+<p>  $ACTION [S_i,a] = r_d $（r表示 reduce，按规则d规约） </p>
+<p>  d：文法规则编号 $(d) A→β $</p>
+<p>  条件：某个项目集形如 $A→β. $</p>
+<p>  动作: 将符号串$β$(假定长度为n)连同状态从栈内弹出, 把A推进栈, 并设置新的栈顶状态$S<em>i,S_j= GOTO[S</em>{i-n},A]$</p>
+</li>
+<li><p>(3) 接受(accept) </p>
+<p>  $ACTION[S_i,$#$]=accept$ （Si对应的是初始符号的产生式$S’→S$#对应的状态）</p>
+</li>
+<li><p>(4) 出错(error) </p>
+<p>  $ACTION[S_i,a]=error$</p>
+</li>
+</ul>
+</li>
+<li><p><strong>构造LR(0)分析表</strong></p>
+<ul>
+<li><p>1、 将文法拓广</p>
+<ul>
+<li><p>修改文法，使识别符号的规则只有一条</p>
+<p><img src="https://s3.uuu.ovh/imgs/2022/12/04/d9a4e3ef55910197.jpg" alt=""></p>
+</li>
+</ul>
+</li>
+<li><p>2、根据文法列出所有的项目</p>
+<ul>
+<li>项目:文法G的每个产生式(规则)的右部添加一个圆点就构成一个项目</li>
+<li><p>项目的直观意义: 指明在分 析过程中的某一时刻已经归 约的部分和等待归约部分</p>
+<p><img src="https://s3.uuu.ovh/imgs/2022/12/04/94941348e4e00f54.jpg" alt=""></p>
+</li>
+</ul>
+</li>
+<li><p>3、将有关项目组合成集合，即DFA中的状态； 所有状态再组合成一个集合，即LR（0）项目集规范族</p>
+<ul>
+<li><p>为实现这一步，先定义：</p>
+<ul>
+<li><p>项目集闭包closure</p>
+<p>  <img src="https://s3.uuu.ovh/imgs/2022/12/04/4ed056212302c5db.jpg" alt=""></p>
+</li>
+<li><p>状态转移函数GOTO</p>
+<p>  <img src="https://s3.uuu.ovh/imgs/2022/12/04/54a957ab577cf0bf.jpg" alt=""></p>
+<ul>
+<li>所以,$GOTO(I,X) = closure(J)$ 的直观意义是: 识别文法规范句型活前缀的DFA, 从状态$ I$(项目集)出发,经过$X$弧所应该到达的状态(项目集合) </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>LR(0)和GOTO的构造算法</p>
+<p>  <img src="https://s3.uuu.ovh/imgs/2022/12/04/17c851dcb1a83065.jpg" alt=""></p>
+</li>
+</ul>
+</li>
+<li><p>有效项目定义</p>
+<p>  若项目$A→β_1 .β_2$ 对活前缀$αβ_1$ 有效，其条件是存在规范推导$E’\overset{<em>}{\Rightarrow}αAw\Rightarrow αβ_1β_2 w$，其中$α,β_1,β_2 ∈ V^</em>, w ∈ V_t^*$</p>
+<p>  简单理解就是项目可以推出该活前缀，则项目是该活前缀的有效项目</p>
+<p>  <img src="https://s3.uuu.ovh/imgs/2022/12/04/904936e9e948c785.jpg" alt=""></p>
+</li>
+</ul>
+<h4 id="2-LR-0-的局限性"><a href="#2-LR-0-的局限性" class="headerlink" title="(2)LR(0)的局限性"></a>(2)LR(0)的局限性</h4><ul>
 <li><p>LR(0)在分析时会产生如下冲突：</p>
 <ul>
 <li><p>Shift-Reduce冲突：应该移进还是规约？</p>
@@ -858,10 +1050,7 @@
 </li>
 <li><p>3、合并ACTION和GOTO表形成分析表</p>
 </li>
-<li><p>样例</p>
-</li>
 </ul>
-<p>TODO</p>
 <h1 id="五、符号表管理技术"><a href="#五、符号表管理技术" class="headerlink" title="五、符号表管理技术"></a>五、符号表管理技术</h1><h2 id="一-概述"><a href="#一-概述" class="headerlink" title="(一)概述"></a>(一)概述</h2><ul>
 <li><p>在编译过程中,编译程序用来记录源程序中各种 名字的特性信息, 所以也称为名字特性表</p>
 <ul>
@@ -1056,7 +1245,7 @@
 </ul>
 </li>
 </ul>
-<h3 id="1、-活动记录"><a href="#1、-活动记录" class="headerlink" title="1、 活动记录"></a>1、 活动记录</h3><ul>
+<h3 id="1、活动记录"><a href="#1、活动记录" class="headerlink" title="1、活动记录"></a>1、活动记录</h3><ul>
 <li><p>一个典型的活动记录可以分为三部分：</p>
 <ul>
 <li><p>1、存放模块中定义的各个局部变量。</p>
@@ -1114,7 +1303,7 @@
 </li>
 <li><p>（c）（d）<img src="https://s3.uuu.ovh/imgs/2022/12/02/7ff31ee7ac727b9c.jpg" alt=""></p>
 </li>
-<li><p>-（e）当模块4执行完，则abp:=prev abp，这样abp恢复 到进入模块4时的情况，运行栈情况如（c） </p>
+<li><p>（e）当模块4执行完，则abp:=prev abp，这样abp恢复 到进入模块4时的情况，运行栈情况如（c） </p>
 </li>
 <li>（f）当M2执行完，则abp:=prev abp，这样abp恢复 到进入M2时的情况，运行栈情况如（b） </li>
 <li>（g）当M1执行完，则abp:=prev abp，这样abp恢复 到进入M1时的情况，运行栈情况如（a） </li>
@@ -1139,12 +1328,12 @@
 </li>
 </ul>
 <h3 id="3、运行时的地址计算"><a href="#3、运行时的地址计算" class="headerlink" title="3、运行时的地址计算"></a>3、运行时的地址计算</h3><ul>
-<li>| 地址计算公式：                                               |<br>  | —————————————————————————————— |<br>  | $\mathrm{if\quad BL = LEV\quad then}$<br />$\quad \mathrm{addr \leftarrow adp+(BL-1)+nip+ON}$<br />$\mathrm{elif\quad BL &lt; LEV\quad then}$<br />$\quad \mathrm{addr\leftarrow display[BL]+(BL-1)+nip+ON}$<br />$\mathrm{else}$<br />$\mathrm{\quad write(“地址错误”)}$ |</li>
+<li><p>| 地址计算公式：                                               |<br>  | —————————————————————————————— |<br>  | $\mathrm{if\quad BL = LEV\quad then}$<br />$\quad \mathrm{addr \leftarrow adp+(BL-1)+nip+ON}$<br />$\mathrm{elif\quad BL &lt; LEV\quad then}$<br />$\quad \mathrm{addr\leftarrow display[BL]+(BL-1)+nip+ON}$<br />$\mathrm{else}$<br />$\mathrm{\quad write(“地址错误”)}$ |</p>
+<p>  $nip$：隐式参数区大小</p>
+<p>  $(BL-1)$：Display区大小</p>
+</li>
 </ul>
-<pre><code>$nip$：隐式参数区大小
-
-$(BL-1)$：Display区大小
-</code></pre><h1 id="七、源程序的中间形式"><a href="#七、源程序的中间形式" class="headerlink" title="七、源程序的中间形式"></a>七、源程序的中间形式</h1><h2 id="一-波兰表示"><a href="#一-波兰表示" class="headerlink" title="(一)波兰表示"></a>(一)波兰表示</h2><ul>
+<h1 id="七、源程序的中间形式"><a href="#七、源程序的中间形式" class="headerlink" title="七、源程序的中间形式"></a>七、源程序的中间形式</h1><h2 id="一-波兰表示"><a href="#一-波兰表示" class="headerlink" title="(一)波兰表示"></a>(一)波兰表示</h2><ul>
 <li><p>构造一个算法，生成“波兰表示”</p>
 <p>  算法： 设一个操作符栈；当读到操作数时，立即输出该操作数， 当扫描到操作符时，与栈顶操作符比较优先级，若栈顶操作符优先级高于栈外，则输出该栈顶操作符，反之，则栈外操作符入栈</p>
 </li>
@@ -1175,7 +1364,10 @@ $(BL-1)$：Display区大小
 <li>抽象语法树： 用树型图的方式表示中间代码 操作数出现在叶节点上，操作符出现在中间结点</li>
 <li>DAG图： Directed Acyclic Graphs 有向无环图 语法树的一种归约表达方式</li>
 </ul>
-<h1 id="八、错误处理"><a href="#八、错误处理" class="headerlink" title="八、错误处理"></a>八、错误处理</h1><h1 id="九、语法制导翻译技术"><a href="#九、语法制导翻译技术" class="headerlink" title="九、语法制导翻译技术"></a>九、语法制导翻译技术</h1><h2 id="一-翻译文法和语法制导翻译"><a href="#一-翻译文法和语法制导翻译" class="headerlink" title="(一)翻译文法和语法制导翻译"></a>(一)翻译文法和语法制导翻译</h2><ul>
+<h1 id="八、错误处理"><a href="#八、错误处理" class="headerlink" title="八、错误处理"></a>八、错误处理</h1><ul>
+<li>略</li>
+</ul>
+<h1 id="九、语法制导翻译技术"><a href="#九、语法制导翻译技术" class="headerlink" title="九、语法制导翻译技术"></a>九、语法制导翻译技术</h1><h2 id="一-翻译文法和语法制导翻译"><a href="#一-翻译文法和语法制导翻译" class="headerlink" title="(一)翻译文法和语法制导翻译"></a>(一)翻译文法和语法制导翻译</h2><ul>
 <li>输入文法：未插入动作符号时的文法。 由输入文法可以通过推导产生输入序列</li>
 <li>翻译文法：插入动作符号的文法。 由翻译文法可以通过推导产生活动序列</li>
 <li>活动序列：由翻译文法推导出的符号串，由终结符和动作 符号组成。 <ul>
@@ -1185,7 +1377,10 @@ $(BL-1)$：Display区大小
 </li>
 <li>定义：翻译文法是上下文无关文法，其终结符号集由输入符 号和动作符号组成。由翻译文法所产生的终结符号串称为活动序列</li>
 </ul>
-<h1 id="十、语义分析和代码生成"><a href="#十、语义分析和代码生成" class="headerlink" title="十、语义分析和代码生成"></a>十、语义分析和代码生成</h1><h1 id="十一、代码优化"><a href="#十一、代码优化" class="headerlink" title="十一、代码优化"></a>十一、代码优化</h1><ul>
+<h1 id="十、语义分析和代码生成"><a href="#十、语义分析和代码生成" class="headerlink" title="十、语义分析和代码生成"></a>十、语义分析和代码生成</h1><ul>
+<li>略</li>
+</ul>
+<h1 id="十一、代码优化"><a href="#十一、代码优化" class="headerlink" title="十一、代码优化"></a>十一、代码优化</h1><ul>
 <li>代码优化：指编译程序为了生成高质量的目标程序而做的各种加工和处理</li>
 <li>优化方法的分类1：<ul>
 <li>与机器无关的优化技术：即与目标机无关的优化， 通常是在中间代码上进行的优化</li>
@@ -1215,9 +1410,8 @@ $(BL-1)$：Display区大小
 </li>
 </ul>
 </li>
-</ul>
-<ul>
-<li>| <span id = "算法：划分基本块">算法：划分基本块</span>        |<br>  | —————————————————————————————— |<br>  | 输入：四元式序列<br />输出：基本块列表，每个四元式仅出现在一个基本块中<br />方法：<br />    1、首先确定入口语句（每个基本块的第一条语句）的集合<br />        规则1：整个语句序列的第一条语句属于入口语句<br />        规则2：任何能由条件/无条件跳转语句转移到的第一条 语句属于入口语句<br />        规则3：紧跟在跳转语句之后的第一条语句属于入口语句 <br />    2、每个入口语句直到下一个入口语句，或者程序结束，它 们之间的所有语句都属于同一个基本块 |</li>
+<li><p>| <span id = "算法：划分基本块">算法：划分基本块</span>        |<br>  | —————————————————————————————— |<br>  | 输入：四元式序列<br />输出：基本块列表，每个四元式仅出现在一个基本块中<br />方法：<br />    1、首先确定入口语句（每个基本块的第一条语句）的集合<br />        规则1：整个语句序列的第一条语句属于入口语句<br />        规则2：任何能由条件/无条件跳转语句转移到的第一条 语句属于入口语句<br />        规则3：紧跟在跳转语句之后的第一条语句属于入口语句 <br />    2、每个入口语句直到下一个入口语句，或者程序结束，它 们之间的所有语句都属于同一个基本块 |</p>
+</li>
 </ul>
 <h3 id="2、流图"><a href="#2、流图" class="headerlink" title="2、流图"></a>2、流图</h3><ul>
 <li>流图是一种有向图</li>
@@ -1353,7 +1547,8 @@ $(BL-1)$：Display区大小
 <li>和局部优化的区别：局部优化在一个基本块内 没有控制流，全局优化处理的是基本块之间的优化受到控制流的影响</li>
 </ul>
 <h3 id="1、活跃变量分析（Liveness）"><a href="#1、活跃变量分析（Liveness）" class="headerlink" title="1、活跃变量分析（Liveness）"></a>1、活跃变量分析（Liveness）</h3><ul>
-<li>了解变量x在某个执行点p是活跃的<ul>
+<li><p>了解变量x在某个执行点p是活跃的</p>
+<ul>
 <li>变量x的值在p点或沿着从p出发的某条路经中会被使用， 则称x在p点是活跃的</li>
 </ul>
 </li>
@@ -1377,32 +1572,197 @@ $(BL-1)$：Display区大小
 <li><p><span id = "基本块的活跃变量数据流分析（基本思路：迭代）"><strong>基本块的活跃变量数据流分析（基本思路：迭代）</strong></span></p>
 <ul>
 <li>输入：程序流图，且基本块的$use$集和$def$集已计算完毕</li>
-<li>输出：每个基本块入口和出口处的$in[B]$和$out[B]$</li>
+<li><p>输出：每个基本块入口和出口处的$in[B]$和$out[B]$</p>
+</li>
+<li><p>| 算法：                                                       |<br>  | —————————————————————————————— |<br>  | $\mathrm{for\quad each\ \ B\ \ do\quad in[B]={};}$<br />$\mathrm{while\quad 集合in发生变化\quad do}$<br />$\mathrm{\quad for\quad each\ \ B\quad do}$<br />$\mathrm{\quad \quad out[B] = \bigcup_{B的后继基本快P}in[P]}$<br />$\mathrm{\quad \quad in[S] = use[S]\cup(out[S]-def[s])}$<br />$\mathrm{\quad end \ end}$ |</p>
+</li>
 </ul>
 </li>
 </ul>
-<pre><code>- | 算法：                                                       |
-    | ------------------------------------------------------------ |
-    | $\mathrm&#123;for\quad each\ \ B\ \ do\quad in[B]=\&#123;\&#125;;&#125;$&lt;br /&gt;$\mathrm&#123;while\quad 集合in发生变化\quad do&#125;$&lt;br /&gt;$\mathrm&#123;\quad for\quad each\ \ B\quad do&#125;$&lt;br /&gt;$$ |
-</code></pre><h1 id="重要知识点索引"><a href="#重要知识点索引" class="headerlink" title="重要知识点索引"></a>重要知识点索引</h1><ul>
-<li><a href="#乔姆斯基文法体系">乔姆斯基文法体系</a></li>
-<li><a href="#短语的查找方案">短语的查找</a></li>
-<li><a href="#NFA的确定化">NFA的确定化</a></li>
-<li><a href="#DFA的极小化">DFA的极小化</a></li>
-<li><a href="#消除左递归的方法">消除左递归的方法</a></li>
-<li><a href="#消除回溯的途径">消除回溯的途径</a></li>
-<li><a href="#不带回溯的充分必要条件">不带回溯的充分必要条件</a></li>
-<li><a href="#FIRST集的计算">FIRST集的计算</a></li>
-<li><a href="#FOLLOW集的计算">FOLLOW集的计算</a></li>
-<li><a href="#分析表的构造">LL(1)分析表的构造</a></li>
-<li><a href="#建造display区的规则">建造display区的规则</a></li>
-<li><a href="#算法：划分基本块">算法：划分基本块</a></li>
-<li><a href="#消除公共子表达式算法">消除公共子表达式算法</a></li>
-<li><a href="#从DAG导出中间代码的启发式算法">从DAG导出中间代码的启发式算法</a></li>
-<li><a href="#基本块的活跃变量数据流分析 （基本思路：迭代）">基本块的活跃变量数据流分析（基本思路：迭代）</a></li>
+<h3 id="2、全局死代码删除"><a href="#2、全局死代码删除" class="headerlink" title="2、全局死代码删除"></a>2、全局死代码删除</h3><h3 id="3、可达定义分析（reaching-def）"><a href="#3、可达定义分析（reaching-def）" class="headerlink" title="3、可达定义分析（reaching def）"></a>3、可达定义分析（reaching def）</h3><ul>
+<li>通过到达定义分析，希望知道：<ul>
+<li>在程序的某个静态点p（例如某个代码、基本块）执行前后）</li>
+<li>某个变量可能出现的值都是在哪里被定义的？</li>
 </ul>
-<p>\<span id = "FOLLOW集的计算">FOLLOW集的计算</span></p>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://lujiuxi.github.io">玖曦</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://lujiuxi.github.io/2022/11/17/%E7%BC%96%E8%AF%91%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/">https://lujiuxi.github.io/2022/11/17/%E7%BC%96%E8%AF%91%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/default_cover3.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/11/17/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA/"><img class="prev-cover" src="/img/default_cover5.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">形式语言与自动机理论</div></div></a></div><div class="next-post pull-right"><a href="/2022/11/15/Django%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"><img class="next-cover" src="/img/default_cover1.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Django后端开发</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">玖曦</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/LuJiuxi"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LuJiuxi" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2506806016@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=2506806016&amp;website=www.oicqzone.com" target="_blank" title="QQ"><i class="fab fa-qq"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%A6%82%E8%AE%BA"><span class="toc-number">1.</span> <span class="toc-text">一、概论</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">1.1.</span> <span class="toc-text">(一)基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B%E4%B8%8E%E7%BC%96%E8%AF%91%E5%99%A8%E6%9E%84%E9%80%A0"><span class="toc-number">1.2.</span> <span class="toc-text">(二)编译过程与编译器构造</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.1.</span> <span class="toc-text">1、编译过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">(1)词法分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">(2)语法分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E8%AF%AD%E4%B9%89%E5%88%86%E6%9E%90%E3%80%81%E7%94%9F%E6%88%90%E4%B8%AD%E9%97%B4%E4%BB%A3%E7%A0%81"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">(3)语义分析、生成中间代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96"><span class="toc-number">1.2.1.4.</span> <span class="toc-text">(4)代码优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E7%94%9F%E6%88%90%E7%9B%AE%E6%A0%87%E7%A8%8B%E5%BA%8F"><span class="toc-number">1.2.1.5.</span> <span class="toc-text">(5)生成目标程序</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E7%BC%96%E8%AF%91%E7%A8%8B%E5%BA%8F%E6%9E%84%E9%80%A0"><span class="toc-number">1.2.2.</span> <span class="toc-text">2、编译程序构造</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BC%96%E8%AF%91%E7%A8%8B%E5%BA%8F%E7%9A%84%E9%80%BB%E8%BE%91%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">(1)编译程序的逻辑结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%A4%9A%E5%B1%82%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA%E5%92%8C%E9%81%8D"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">(2)多层中间表示和遍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%89%8D%E7%AB%AF%E5%92%8C%E5%90%8E%E7%AB%AF"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">(3)前端和后端</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%96%87%E6%B3%95%E5%92%8C%E8%AF%AD%E8%A8%80"><span class="toc-number">2.</span> <span class="toc-text">二、文法和语言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%EF%BC%88%E5%8F%AA%E5%8C%85%E5%90%AB%E9%87%8D%E8%A6%81%E6%A6%82%E5%BF%B5%EF%BC%89"><span class="toc-number">2.1.</span> <span class="toc-text">(一)形式语言基础（只包含重要概念）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E6%B3%95%EF%BC%88Grammer%EF%BC%89"><span class="toc-number">2.2.</span> <span class="toc-text">(二)文法（Grammer）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%96%87%E6%B3%95%E5%92%8C%E8%AF%AD%E8%A8%80%E7%9A%84%E5%BD%A2%E5%BC%8F%E5%AE%9A%E4%B9%89"><span class="toc-number">2.3.</span> <span class="toc-text">(三)文法和语言的形式定义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E6%96%87%E6%B3%95%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">2.3.1.</span> <span class="toc-text">1、文法的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%8E%A8%E5%AF%BC%E7%9A%84%E5%BD%A2%E5%BC%8F%E5%AE%9A%E4%B9%89"><span class="toc-number">2.3.2.</span> <span class="toc-text">2、推导的形式定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E8%AF%AD%E8%A8%80%E7%9A%84%E5%BD%A2%E5%BC%8F%E5%AE%9A%E4%B9%89"><span class="toc-number">2.3.3.</span> <span class="toc-text">3、语言的形式定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E9%80%92%E5%BD%92%E6%96%87%E6%B3%95"><span class="toc-number">2.3.4.</span> <span class="toc-text">4、递归文法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%96%87%E6%B3%95%E6%9E%84%E9%80%A0"><span class="toc-number">2.4.</span> <span class="toc-text">(四)文法构造</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E7%9F%AD%E8%AF%AD%E3%80%81%E7%AE%80%E5%8D%95%E7%9F%AD%E8%AF%AD%E5%92%8C%E5%8F%A5%E6%9F%84%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="toc-number">2.5.</span> <span class="toc-text">(五)短语、简单短语和句柄（重点）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E8%AF%AD%E6%B3%95%E6%A0%91%EF%BC%88%E6%8E%A8%E5%AF%BC%E6%A0%91%EF%BC%89"><span class="toc-number">2.6.</span> <span class="toc-text">(六)语法树（推导树）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E8%AF%AD%E6%B3%95%E6%A0%91%E4%B8%8E%E4%BA%8C%E4%B9%89%E6%80%A7%E6%96%87%E6%B3%95"><span class="toc-number">2.6.1.</span> <span class="toc-text">1、语法树与二义性文法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%AF%AD%E6%B3%95%E6%A0%91"><span class="toc-number">2.6.1.1.</span> <span class="toc-text">(1)语法树</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BA%8C%E4%B9%89%E6%80%A7%E6%96%87%E6%B3%95"><span class="toc-number">2.6.1.2.</span> <span class="toc-text">(2)二义性文法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%96%87%E6%B3%95%E7%9A%84%E5%85%B6%E5%AE%83%E8%A1%A8%E7%A4%BA%E6%B3%95"><span class="toc-number">2.7.</span> <span class="toc-text">(七)文法的其它表示法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E4%B9%94%E5%A7%86%E6%96%AF%E5%9F%BA%E6%96%87%E6%B3%95%E4%BD%93%E7%B3%BB"><span class="toc-number">2.8.</span> <span class="toc-text">(八)乔姆斯基文法体系</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">三、词法分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="toc-number">3.1.</span> <span class="toc-text">(一)词法分析的功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%AD%A3%E5%88%99%E6%96%87%E6%B3%95%E5%92%8C%E7%8A%B6%E6%80%81%E5%9B%BE"><span class="toc-number">3.2.</span> <span class="toc-text">(二)正则文法和状态图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%BB%8E%E2%80%9C%E7%8A%B6%E6%80%81%E5%9B%BE%E2%80%9D%E5%88%B0%E2%80%9C%E6%9C%89%E7%A9%B7%E7%8A%B6%E6%80%81%E8%87%AA%E5%8A%A8%E6%9C%BA%E2%80%9D"><span class="toc-number">3.3.</span> <span class="toc-text">(三)从“状态图”到“有穷状态自动机”</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%A1%AE%E5%AE%9A%E7%9A%84%E6%9C%89%E7%A9%B7%E8%87%AA%E5%8A%A8%E6%9C%BA-DFA"><span class="toc-number">3.3.1.</span> <span class="toc-text">1、确定的有穷自动机(DFA)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E4%B8%8D%E7%A1%AE%E5%AE%9A%E7%9A%84%E6%9C%89%E7%A9%B7%E8%87%AA%E5%8A%A8%E6%9C%BA-NFA"><span class="toc-number">3.3.2.</span> <span class="toc-text">2、不确定的有穷自动机(NFA)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%9F%BA%E7%A1%80"><span class="toc-number">3.3.3.</span> <span class="toc-text">3、正则表达式基础</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-NFA%E7%9A%84%E7%A1%AE%E5%AE%9A%E5%8C%96"><span class="toc-number">3.4.</span> <span class="toc-text">(四)NFA的确定化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-DFA%E7%9A%84%E6%9E%81%E5%B0%8F%E5%8C%96"><span class="toc-number">3.5.</span> <span class="toc-text">(五)DFA的极小化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96"><span class="toc-number">3.6.</span> <span class="toc-text">(六)词法分析的自动化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%E7%A8%8B%E5%BA%8F-getSymbol"><span class="toc-number">3.7.</span> <span class="toc-text">(七)词法分析程序 getSymbol()</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">四、语法分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">4.1.</span> <span class="toc-text">(一)语法分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%88%86%E6%9E%90"><span class="toc-number">4.2.</span> <span class="toc-text">(二)自顶向下分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%88%86%E6%9E%90%E7%9A%84%E4%B8%80%E8%88%AC%E8%BF%87%E7%A8%8B"><span class="toc-number">4.2.1.</span> <span class="toc-text">1、自顶向下分析的一般过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%88%86%E6%9E%90%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="toc-number">4.2.2.</span> <span class="toc-text">2、自顶向下分析存在的问题及解决方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%B7%A6%E9%80%92%E5%BD%92%E6%96%87%E6%B3%95"><span class="toc-number">4.2.2.1.</span> <span class="toc-text">(1) 左递归文法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B6%88%E9%99%A4%E5%B7%A6%E9%80%92%E5%BD%92%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">4.2.2.1.1.</span> <span class="toc-text">消除左递归的方法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9B%9E%E6%BA%AF%E9%97%AE%E9%A2%98"><span class="toc-number">4.2.2.2.</span> <span class="toc-text">(2)回溯问题</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B6%88%E9%99%A4%E5%9B%9E%E6%BA%AF%E7%9A%84%E9%80%94%E5%BE%84"><span class="toc-number">4.2.2.2.1.</span> <span class="toc-text">消除回溯的途径</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E9%80%92%E5%BD%92%E5%AD%90%E7%A8%8B%E5%BA%8F%E6%B3%95%EF%BC%88%E9%80%92%E5%BD%92%E4%B8%8B%E9%99%8D%E5%88%86%E6%9E%90%E6%B3%95%EF%BC%89"><span class="toc-number">4.2.3.</span> <span class="toc-text">3、递归子程序法（递归下降分析法）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81LL-1-%E6%96%87%E6%B3%95"><span class="toc-number">4.2.4.</span> <span class="toc-text">4、LL(1)文法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-FIRST%E9%9B%86%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-number">4.2.4.1.</span> <span class="toc-text">(1)FIRST集的计算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-FOLLOW%E9%9B%86%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-number">4.2.4.2.</span> <span class="toc-text">(2)FOLLOW集的计算</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81LL-1-%E5%88%86%E6%9E%90%E6%B3%95"><span class="toc-number">4.2.5.</span> <span class="toc-text">5、LL(1)分析法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-LL%E5%88%86%E6%9E%90%E7%A8%8B%E5%BA%8F%E6%9E%84%E9%80%A0%E5%8F%8A%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B"><span class="toc-number">4.2.5.1.</span> <span class="toc-text">(1)LL分析程序构造及分析过程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%88%86%E6%9E%90%E8%A1%A8%E7%9A%84%E6%9E%84%E9%80%A0"><span class="toc-number">4.2.6.</span> <span class="toc-text">(2)分析表的构造</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%87%AA%E5%BA%95%E5%90%91%E4%B8%8A%E5%88%86%E6%9E%90"><span class="toc-number">4.3.</span> <span class="toc-text">(三)自底向上分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81LR%E5%88%86%E6%9E%90%E6%96%B9%E6%B3%95"><span class="toc-number">4.3.1.</span> <span class="toc-text">1、LR分析方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-LR-0-%E5%88%86%E6%9E%90%E6%B3%95"><span class="toc-number">4.3.1.1.</span> <span class="toc-text">(1)LR(0)分析法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-LR-0-%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">4.3.1.2.</span> <span class="toc-text">(2)LR(0)的局限性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-LR-1-%E5%88%86%E6%9E%90%E6%B3%95"><span class="toc-number">4.3.1.3.</span> <span class="toc-text">(3)LR(1)分析法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-SLR-1-%EF%BC%9A%E7%AE%80%E5%8D%95LR%E5%88%86%E6%9E%90%E6%B3%95"><span class="toc-number">4.3.1.4.</span> <span class="toc-text">(4)SLR(1)：简单LR分析法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E2%91%A0SLR%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="toc-number">4.3.1.4.1.</span> <span class="toc-text">①SLR的基本思想</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E2%91%A1%E6%9E%84%E9%80%A0SLR%E5%88%86%E6%9E%90%E8%A1%A8"><span class="toc-number">4.3.1.4.2.</span> <span class="toc-text">②构造SLR分析表</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%AE%A1%E7%90%86%E6%8A%80%E6%9C%AF"><span class="toc-number">5.</span> <span class="toc-text">五、符号表管理技术</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0"><span class="toc-number">5.1.</span> <span class="toc-text">(一)概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%9A%84%E7%BB%84%E7%BB%87%E4%B8%8E%E5%86%85%E5%AE%B9"><span class="toc-number">5.2.</span> <span class="toc-text">(二)符号表的组织与内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84%E4%B8%8E%E5%86%85%E5%AE%B9"><span class="toc-number">5.2.1.</span> <span class="toc-text">1、符号表的结构与内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%9A%84%E7%BB%84%E7%BB%87%E6%96%B9%E5%BC%8F"><span class="toc-number">5.2.2.</span> <span class="toc-text">2、符号表的组织方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E9%9D%9E%E5%88%86%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84%E8%AF%AD%E8%A8%80%E7%9A%84%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%BB%84%E7%BB%87"><span class="toc-number">5.2.3.</span> <span class="toc-text">3、非分程序结构语言的符号表组织</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%9D%9E%E5%88%86%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84%E8%AF%AD%E8%A8%80"><span class="toc-number">5.2.3.1.</span> <span class="toc-text">(1)非分程序结构语言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%A0%87%E8%AF%86%E7%AC%A6%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%8F%8A%E5%9F%BA%E6%9C%AC%E5%A4%84%E7%90%86%E5%8A%9E%E6%B3%95"><span class="toc-number">5.2.3.2.</span> <span class="toc-text">(2)标识符的作用域及基本处理办法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%9A%84%E7%BB%84%E7%BB%87%E6%96%B9%E5%BC%8F"><span class="toc-number">5.2.3.3.</span> <span class="toc-text">(3)符号表的组织方式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E5%88%86%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84%E8%AF%AD%E8%A8%80%E7%9A%84%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%BB%84%E7%BB%87"><span class="toc-number">5.2.4.</span> <span class="toc-text">4、分程序结构语言的符号表组织</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%88%86%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84%E8%AF%AD%E8%A8%80"><span class="toc-number">5.2.4.1.</span> <span class="toc-text">(1)分程序结构语言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%A0%87%E8%AF%86%E7%AC%A6%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%92%8C%E5%9F%BA%E6%9C%AC%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95"><span class="toc-number">5.2.4.2.</span> <span class="toc-text">(2)标识符的作用域和基本处理方法</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%84%E7%BB%87%E5%8F%8A%E7%AE%A1%E7%90%86"><span class="toc-number">6.</span> <span class="toc-text">六、运行时的存储组织及管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0-1"><span class="toc-number">6.1.</span> <span class="toc-text">(一)概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E9%9D%99%E6%80%81%E5%AD%98%E5%82%A8%E5%88%86%E9%85%8D"><span class="toc-number">6.2.</span> <span class="toc-text">(二)静态存储分配</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5"><span class="toc-number">6.2.1.</span> <span class="toc-text">1、分配策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%A8%A1%E5%9D%97-FORTRAN%E5%AD%90%E7%A8%8B%E5%BA%8F-%E7%9A%84%E5%AE%8C%E6%95%B4%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="toc-number">6.2.2.</span> <span class="toc-text">2、模块(FORTRAN子程序)的完整数据区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%8A%A8%E6%80%81%E5%AD%98%E5%82%A8%E5%88%86%E9%85%8D"><span class="toc-number">6.3.</span> <span class="toc-text">(三)动态存储分配</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81-%E6%B4%BB%E5%8A%A8%E8%AE%B0%E5%BD%95"><span class="toc-number">6.3.1.</span> <span class="toc-text">1、 活动记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%BB%BA%E9%80%A0display%E5%8C%BA%E7%9A%84%E8%A7%84%E5%88%99"><span class="toc-number">6.3.2.</span> <span class="toc-text">2、建造display区的规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97"><span class="toc-number">6.3.3.</span> <span class="toc-text">3、运行时的地址计算</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%BA%90%E7%A8%8B%E5%BA%8F%E7%9A%84%E4%B8%AD%E9%97%B4%E5%BD%A2%E5%BC%8F"><span class="toc-number">7.</span> <span class="toc-text">七、源程序的中间形式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%B3%A2%E5%85%B0%E8%A1%A8%E7%A4%BA"><span class="toc-number">7.1.</span> <span class="toc-text">(一)波兰表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-N%E5%85%83%E8%A1%A8%E7%A4%BA"><span class="toc-number">7.2.</span> <span class="toc-text">(二)N元表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%8A%BD%E8%B1%A1%E8%AF%AD%E6%B3%95%E6%A0%91"><span class="toc-number">7.3.</span> <span class="toc-text">(三)抽象语法树</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-number">8.</span> <span class="toc-text">八、错误处理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E8%AF%AD%E6%B3%95%E5%88%B6%E5%AF%BC%E7%BF%BB%E8%AF%91%E6%8A%80%E6%9C%AF"><span class="toc-number">9.</span> <span class="toc-text">九、语法制导翻译技术</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%BF%BB%E8%AF%91%E6%96%87%E6%B3%95%E5%92%8C%E8%AF%AD%E6%B3%95%E5%88%B6%E5%AF%BC%E7%BF%BB%E8%AF%91"><span class="toc-number">9.1.</span> <span class="toc-text">(一)翻译文法和语法制导翻译</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E8%AF%AD%E4%B9%89%E5%88%86%E6%9E%90%E5%92%8C%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90"><span class="toc-number">10.</span> <span class="toc-text">十、语义分析和代码生成</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96"><span class="toc-number">11.</span> <span class="toc-text">十一、代码优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%9F%BA%E6%9C%AC%E5%9D%97%E3%80%81%E6%B5%81%E5%9B%BE"><span class="toc-number">11.1.</span> <span class="toc-text">(一)基本块、流图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%9F%BA%E6%9C%AC%E5%9D%97"><span class="toc-number">11.1.1.</span> <span class="toc-text">1、基本块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%B5%81%E5%9B%BE"><span class="toc-number">11.1.2.</span> <span class="toc-text">2、流图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%95%B0%E6%8D%AE%E6%B5%81%E5%88%86%E6%9E%90"><span class="toc-number">11.2.</span> <span class="toc-text">(二)数据流分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E6%95%B0%E6%8D%AE%E6%B5%81%E5%88%86%E6%9E%90%E6%96%B9%E7%A8%8B"><span class="toc-number">11.2.1.</span> <span class="toc-text">1、数据流分析方程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%8A%B6%E6%80%81"><span class="toc-number">11.2.2.</span> <span class="toc-text">2、程序的状态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%B1%80%E9%83%A8%E4%BC%98%E5%8C%96%EF%BC%88%E5%9F%BA%E6%9C%AC%E5%9D%97%E5%86%85%E7%9A%84%E4%BC%98%E5%8C%96%EF%BC%89"><span class="toc-number">11.3.</span> <span class="toc-text">(三)局部优化（基本块内的优化）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%88%A9%E7%94%A8%E4%BB%A3%E6%95%B0%E6%80%A7%E8%B4%A8%EF%BC%88%E4%BB%A3%E6%95%B0%E5%8F%98%E6%8D%A2%EF%BC%89"><span class="toc-number">11.3.1.</span> <span class="toc-text">1、利用代数性质（代数变换）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%B8%B8%E6%95%B0%E5%90%88%E5%B9%B6%E5%92%8C%E4%BC%A0%E6%92%AD"><span class="toc-number">11.3.2.</span> <span class="toc-text">2、常数合并和传播</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%88%A0%E9%99%A4%E5%86%97%E4%BD%99%E4%BB%A3%E7%A0%81%EF%BC%88DCE-Dead-Code-Elimination%EF%BC%89"><span class="toc-number">11.3.3.</span> <span class="toc-text">3、删除冗余代码（DCE: Dead Code Elimination）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E7%AA%A5%E5%AD%94%E4%BC%98%E5%8C%96%EF%BC%88peep-hole%EF%BC%89"><span class="toc-number">11.3.4.</span> <span class="toc-text">4、窥孔优化（peep-hole）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81%E6%B6%88%E9%99%A4%E5%85%AC%E5%85%B1%E5%AD%90%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">11.3.5.</span> <span class="toc-text">5、消除公共子表达式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%85%A8%E5%B1%80%E4%BC%98%E5%8C%96"><span class="toc-number">11.4.</span> <span class="toc-text">(四)全局优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E6%B4%BB%E8%B7%83%E5%8F%98%E9%87%8F%E5%88%86%E6%9E%90%EF%BC%88Liveness%EF%BC%89"><span class="toc-number">11.4.1.</span> <span class="toc-text">1、活跃变量分析（Liveness）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%87%8D%E8%A6%81%E7%9F%A5%E8%AF%86%E7%82%B9%E7%B4%A2%E5%BC%95"><span class="toc-number">12.</span> <span class="toc-text">重要知识点索引</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/11/17/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%90%86%E8%AE%BA/" title="数据库理论"><img src="/img/default_cover3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据库理论"/></a><div class="content"><a class="title" href="/2022/11/17/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%90%86%E8%AE%BA/" title="数据库理论">数据库理论</a><time datetime="2022-11-17T15:55:19.000Z" title="Created 2022-11-17 23:55:19">2022-11-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/17/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA/" title="形式语言与自动机理论"><img src="/img/default_cover5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="形式语言与自动机理论"/></a><div class="content"><a class="title" href="/2022/11/17/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA/" title="形式语言与自动机理论">形式语言与自动机理论</a><time datetime="2022-11-17T15:54:59.000Z" title="Created 2022-11-17 23:54:59">2022-11-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/17/%E7%BC%96%E8%AF%91%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/" title="编译技术笔记"><img src="/img/default_cover3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="编译技术笔记"/></a><div class="content"><a class="title" href="/2022/11/17/%E7%BC%96%E8%AF%91%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/" title="编译技术笔记">编译技术笔记</a><time datetime="2022-11-17T15:54:16.000Z" title="Created 2022-11-17 23:54:16">2022-11-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/15/Django%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/" title="Django后端开发"><img src="/img/default_cover1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Django后端开发"/></a><div class="content"><a class="title" href="/2022/11/15/Django%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/" title="Django后端开发">Django后端开发</a><time datetime="2022-11-15T00:11:05.000Z" title="Created 2022-11-15 08:11:05">2022-11-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/10/04/LeNet-5/" title="LeNet-5"><img src="/img/default_cover5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeNet-5"/></a><div class="content"><a class="title" href="/2022/10/04/LeNet-5/" title="LeNet-5">LeNet-5</a><time datetime="2022-10-04T12:24:55.000Z" title="Created 2022-10-04 20:24:55">2022-10-04</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('/img/default_cover3.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 玖曦</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading the Database</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
+</li>
+<li><p>代码对应的到达定义数据流方程</p>
+<ul>
+<li><code>d1: u = v op w， v和w为变量，op为操作符</code></li>
+<li>$out[d1]=gen[d1]\cup(in[d1]-kill[d1])$<ul>
+<li>$gen[d1]={d1}$：表明该语句产生了一个定义点（定义点 d1定义了变量u）</li>
+<li>$kill[d1]$：是程序中所有对变量u定义的其他定义 点的集合（包括d1之前或之后的定义点）</li>
+<li>对于该代码在同一基本块中紧邻的后继代码，假设 其为$d2$，$in[d2]$等价于$out[d1]$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>基本块B的到达定义数据流方程</p>
+<ul>
+<li>$out[B]=gen[B]\cup (in[B]–kill[B])$<ul>
+<li>$in[B]$为进入基本块时的数据流信息</li>
+<li>$kill[B]= kill[d1] \cup kill[d2]…\cup kill[dn], d1~dn$依次为基本块中的语句</li>
+<li>$gen[B]= gen[dn]\cup (gen[d(n-1)] – kill[dn])\cup (gen[d(n-2)] – kill[d(n-1)] – kill[dn])…\cup (gen[d1] - kill[d2] – kill[d3]…- kill[dn])$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><span id = "算法：基本块的到达定义数据流分析（迭代思想）"><strong>算法：基本块的到达定义数据流分析（迭代思想）</strong></span></p>
+<ul>
+<li>输入：程序流图，且基本块的$kill[\ ]$和$gen[\ ]$已经计算完毕</li>
+<li><p>输出：每个基本块入口和出口处的in和out集合，即$in[B] $和$out[B]$</p>
+</li>
+<li><p>算法：</p>
+<ul>
+<li>1、将包括代表流图出口基本块$B_{exit}$的所有基本块的$out$集合， 初始化为空集</li>
+<li>2、根据方程$in[B] = \bigcup_{B的后继基本快P}out[P]$，$out[B] = gen[B]\cup( in[B] – kill[B] )$，为每个基本块$B$依次计算集合$in[B]$ 和$out[B]$</li>
+<li>3、如果某个基本块计算得到的$out[B]$与该基本块此前计算 得出的$out[B]$不同，则循环执行步骤2，直到所有基本块的$out[B]$集合不再产生变化为止</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="4、全局复制传播（常量传播）"><a href="#4、全局复制传播（常量传播）" class="headerlink" title="4、全局复制传播（常量传播）"></a>4、全局复制传播（常量传播）</h3><ul>
+<li>目的：寻找所有可以被替换成常量的变量。</li>
+</ul>
+<h3 id="5、冲突图"><a href="#5、冲突图" class="headerlink" title="5、冲突图"></a>5、冲突图</h3><ul>
+<li>假设只有跨越基本块活跃的变量才能分配到全局寄存器 并且活跃范围重合的变量之间无法共享全局寄存器</li>
+<li>连线多画了，不影响程序的正确性； 少连线了，会影响程序的正确性</li>
+<li><p>冲突图中两个节点（变量）间存在边的条件约束为：其中一个变量在另一个变量的<strong>定义点</strong>处活跃</p>
+</li>
+<li><p><strong>关于变量冲突的判断</strong></p>
+<ul>
+<li>算法一：在每一个变量的定义点计算活跃变量</li>
+<li>算法二：计算基本块入口处的活跃变量（in的集合），这些变量在该基本块中的定义点活跃，因而冲突。之后，在基本块内部，进一步计算每个定义点的活跃变量（基本块范围内计算）</li>
+</ul>
+</li>
+<li><strong>Define-use链</strong><ul>
+<li>变量的某一定义点，以及所有可能使用该定义点所定义变量值的使用点所组成的一个链</li>
+<li>同一变量的多个定义-使用链，如果它们拥有某个同样 的使用点，则合并为同一个网</li>
+</ul>
+</li>
+</ul>
+<h3 id="6、支配属性（Dominance-Property）"><a href="#6、支配属性（Dominance-Property）" class="headerlink" title="6、支配属性（Dominance Property）"></a>6、支配属性（Dominance Property）</h3><ul>
+<li><p>节点D支配节点N：如果从开始到N的每条路径都通过D</p>
+</li>
+<li><p>$Dom(D)={N | 从开始到 N 的每条路径都通过D}$</p>
+</li>
+<li><p><span id = "用数据流计算支配属性"><strong>用数据流计算支配属性</strong></span></p>
+<ul>
+<li>自上向下，数据流计算过程</li>
+<li><p>$D(\boldsymbol{n})={\boldsymbol{n}} \cup \bigcap_{\boldsymbol{m} \in \boldsymbol{p r e d s}(\boldsymbol{n})} D(\boldsymbol{m})$</p>
+<p><img src="https://s3.uuu.ovh/imgs/2022/12/03/b100eaf1096f6212.jpg" alt=""></p>
+<p><img src="https://s3.uuu.ovh/imgs/2022/12/03/7c3e652855db9df8.jpg" alt=""></p>
+</li>
+</ul>
+</li>
+<li><p>支配边界：Dominance Frontier</p>
+<ul>
+<li>X的支配边界$DF(X) ={Y | 存在一个从X\rightarrow Y 的路径,且Y是这个路径上第一个不被X严格支配的节点}$</li>
+</ul>
+</li>
+</ul>
+<h3 id="7、循环优化"><a href="#7、循环优化" class="headerlink" title="7、循环优化"></a>7、循环优化</h3><ul>
+<li><p>循环L 是基本块的集合，满足①强连通； ②有唯一的入口点</p>
+</li>
+<li><p>优化方案</p>
+<ul>
+<li><p>1、循环不变式（Loop invariant）代码外提（code motion）</p>
+</li>
+<li><p>2、循环展开（Loop Unroll）</p>
+<ul>
+<li>将构成循环体的代码（不包括控制循环的测试和转移部分），重复产生许多次（这可在编译时确定），而不仅仅是一次，以空间换时间</li>
+</ul>
+</li>
+<li>3、归纳变量的优化和条件判断的替换<ul>
+<li>在每一次执行循环迭代的过程中，若某变量的值固定增 加（或减少）一个常量值，则称该变量为归纳变量 (induction variable)。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="五-常见的编译优化"><a href="#五-常见的编译优化" class="headerlink" title="(五)常见的编译优化"></a>(五)常见的编译优化</h2><p><img src="https://s3.uuu.ovh/imgs/2022/12/03/d15e79e083ae4498.jpg" alt=""></p>
+<h1 id="十二、目标代码生成"><a href="#十二、目标代码生成" class="headerlink" title="十二、目标代码生成"></a>十二、目标代码生成</h1><h2 id="一-指令集架构"><a href="#一-指令集架构" class="headerlink" title="(一)指令集架构"></a>(一)<span id = "指令集架构">指令集架构</span></h2><ul>
+<li><p><img src="https://s3.uuu.ovh/imgs/2022/12/03/fd7dbeb63bcb8b14.jpg" alt=""></p>
+<p>  <img src="https://s3.uuu.ovh/imgs/2022/12/03/9e53a320be0b8755.jpg" alt=""></p>
+</li>
+</ul>
+<h2 id="二-地址空间"><a href="#二-地址空间" class="headerlink" title="(二)地址空间"></a>(二)地址空间</h2><ul>
+<li>略</li>
+</ul>
+<h2 id="三-寄存器的分配和指派"><a href="#三-寄存器的分配和指派" class="headerlink" title="(三)寄存器的分配和指派"></a>(三)寄存器的分配和指派</h2><ul>
+<li>寄存器特点<ul>
+<li>访问快</li>
+<li>有些寄存器和指令执行有关系</li>
+<li>数量少，分配策略</li>
+</ul>
+</li>
+<li>寄存器分配的目标<ul>
+<li>将变量与寄存器之间建立对应关系</li>
+<li>从程序优化的角度来说，我们希望所有指令的执行都仅在寄存器中完成</li>
+</ul>
+</li>
+<li>寄存器通常分为<ul>
+<li>通用寄存器<ul>
+<li>保留寄存器</li>
+<li>调用方保存的寄存器——临时寄存器</li>
+<li>被调用方保存的寄存器——全局寄存器</li>
+</ul>
+</li>
+<li>专用寄存器</li>
+</ul>
+</li>
+<li>全局寄存器分配<ul>
+<li>“全局”相对于“基本块”而言，不是“程序全局”</li>
+<li>全局寄存器分配的对象主要是函数的局部变量，包 括函数入口参数</li>
+</ul>
+</li>
+<li>分配原则<ul>
+<li>优先分配给跨基本块仍然活跃的变量，尤其是循 环体内最活跃的变量</li>
+<li>局部变量参与全局寄存器分配<ul>
+<li>为了线程安全，全局变量/静态变量一般不参与全局 寄存器分配</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="1、寄存器分配：引用计数"><a href="#1、寄存器分配：引用计数" class="headerlink" title="1、寄存器分配：引用计数"></a>1、寄存器分配：引用计数</h3><ul>
+<li>原则：如果一个局部变量被访问的次数较多， 那么它获得全局寄存器的机会也较大</li>
+</ul>
+<h3 id="2、寄存器分配：线性扫描"><a href="#2、寄存器分配：线性扫描" class="headerlink" title="2、寄存器分配：线性扫描"></a>2、寄存器分配：线性扫描</h3><ul>
+<li>原则：先来先服务，没错就是你想的那个最朴素的分配办法</li>
+</ul>
+<h3 id="3、寄存器分配：图着色算法"><a href="#3、寄存器分配：图着色算法" class="headerlink" title="3、寄存器分配：图着色算法"></a>3、<span id = "寄存器分配：图着色算法">寄存器分配：图着色算法</span></h3><ul>
+<li>一种启发式图着色算法：Chaitin-Briggs算法<ul>
+<li>输入：冲突图G</li>
+<li>算法：<ul>
+<li>1、找到第一个连接边数目小于K的结点，将它从图G中移走，形成图G’</li>
+<li>2、重复步骤1，直到无法再从G’中移走结点</li>
+<li>3、在图中选取适当的结点，将它记录为 “不分配全局寄存器”的结点，并从图中移走</li>
+<li>4、重复上述步骤，直到图中仅剩余1个结点</li>
+<li>5、按照结点移走的反向顺序将点和边添加回去，并分配颜色</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="4、寄存器分配：临时寄存器分配"><a href="#4、寄存器分配：临时寄存器分配" class="headerlink" title="4、寄存器分配：临时寄存器分配"></a>4、寄存器分配：临时寄存器分配</h3><ul>
+<li>临时寄存器的管理方法：寄存器池</li>
+<li>分配算法（基本思想 FIFO）<ul>
+<li>进入基本块：清空临时寄存器池</li>
+<li>全局变量、局部变量使用临时寄存器：向临时寄存器池申请</li>
+<li>申请处理：<ul>
+<li>有空闲寄存器：分配申请，做标识</li>
+<li>没有空闲寄存器：（启发式）选取一个在即将生成代码中不会被使用的寄存器写回相应的内存空间，标识该寄存器被新的变量占用，返回该寄存器</li>
+</ul>
+</li>
+<li>退出基本块（或函数调用发生前）：将寄存器池中的值写回内存，清空临时寄存器池</li>
+</ul>
+</li>
+</ul>
+<h2 id="四-指令选择"><a href="#四-指令选择" class="headerlink" title="(四)指令选择"></a>(四)指令选择</h2><ul>
+<li>略</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://lujiuxi.github.io">玖曦</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://lujiuxi.github.io/2022/11/17/%E7%BC%96%E8%AF%91%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/">https://lujiuxi.github.io/2022/11/17/%E7%BC%96%E8%AF%91%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/default_cover5.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/11/17/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA/"><img class="prev-cover" src="/img/default_cover1.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">形式语言与自动机理论</div></div></a></div><div class="next-post pull-right"><a href="/2022/11/15/Django%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/"><img class="next-cover" src="/img/default_cover1.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Django后端开发</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">玖曦</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/LuJiuxi"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/LuJiuxi" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2506806016@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=2506806016&amp;website=www.oicqzone.com" target="_blank" title="QQ"><i class="fab fa-qq"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9B%B6%E3%80%81%E9%87%8D%E8%A6%81%E7%9F%A5%E8%AF%86%E7%82%B9%E7%B4%A2%E5%BC%95"><span class="toc-number">1.</span> <span class="toc-text">零、重要知识点索引</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%A6%82%E8%AE%BA"><span class="toc-number">2.</span> <span class="toc-text">一、概论</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">2.1.</span> <span class="toc-text">(一)基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B%E4%B8%8E%E7%BC%96%E8%AF%91%E5%99%A8%E6%9E%84%E9%80%A0"><span class="toc-number">2.2.</span> <span class="toc-text">(二)编译过程与编译器构造</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B"><span class="toc-number">2.2.1.</span> <span class="toc-text">1、编译过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">2.2.1.1.</span> <span class="toc-text">(1)词法分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">2.2.1.2.</span> <span class="toc-text">(2)语法分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E8%AF%AD%E4%B9%89%E5%88%86%E6%9E%90%E3%80%81%E7%94%9F%E6%88%90%E4%B8%AD%E9%97%B4%E4%BB%A3%E7%A0%81"><span class="toc-number">2.2.1.3.</span> <span class="toc-text">(3)语义分析、生成中间代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96"><span class="toc-number">2.2.1.4.</span> <span class="toc-text">(4)代码优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E7%94%9F%E6%88%90%E7%9B%AE%E6%A0%87%E7%A8%8B%E5%BA%8F"><span class="toc-number">2.2.1.5.</span> <span class="toc-text">(5)生成目标程序</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E7%BC%96%E8%AF%91%E7%A8%8B%E5%BA%8F%E6%9E%84%E9%80%A0"><span class="toc-number">2.2.2.</span> <span class="toc-text">2、编译程序构造</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BC%96%E8%AF%91%E7%A8%8B%E5%BA%8F%E7%9A%84%E9%80%BB%E8%BE%91%E7%BB%93%E6%9E%84"><span class="toc-number">2.2.2.1.</span> <span class="toc-text">(1)编译程序的逻辑结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%A4%9A%E5%B1%82%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA%E5%92%8C%E9%81%8D"><span class="toc-number">2.2.2.2.</span> <span class="toc-text">(2)多层中间表示和遍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%89%8D%E7%AB%AF%E5%92%8C%E5%90%8E%E7%AB%AF"><span class="toc-number">2.2.2.3.</span> <span class="toc-text">(3)前端和后端</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%96%87%E6%B3%95%E5%92%8C%E8%AF%AD%E8%A8%80"><span class="toc-number">3.</span> <span class="toc-text">二、文法和语言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80%EF%BC%88%E5%8F%AA%E5%8C%85%E5%90%AB%E9%87%8D%E8%A6%81%E6%A6%82%E5%BF%B5%EF%BC%89"><span class="toc-number">3.1.</span> <span class="toc-text">(一)形式语言基础（只包含重要概念）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%96%87%E6%B3%95%EF%BC%88Grammer%EF%BC%89"><span class="toc-number">3.2.</span> <span class="toc-text">(二)文法（Grammer）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%96%87%E6%B3%95%E5%92%8C%E8%AF%AD%E8%A8%80%E7%9A%84%E5%BD%A2%E5%BC%8F%E5%AE%9A%E4%B9%89"><span class="toc-number">3.3.</span> <span class="toc-text">(三)文法和语言的形式定义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E6%96%87%E6%B3%95%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">3.3.1.</span> <span class="toc-text">1、文法的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%8E%A8%E5%AF%BC%E7%9A%84%E5%BD%A2%E5%BC%8F%E5%AE%9A%E4%B9%89"><span class="toc-number">3.3.2.</span> <span class="toc-text">2、推导的形式定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E8%AF%AD%E8%A8%80%E7%9A%84%E5%BD%A2%E5%BC%8F%E5%AE%9A%E4%B9%89"><span class="toc-number">3.3.3.</span> <span class="toc-text">3、语言的形式定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E9%80%92%E5%BD%92%E6%96%87%E6%B3%95"><span class="toc-number">3.3.4.</span> <span class="toc-text">4、递归文法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%96%87%E6%B3%95%E6%9E%84%E9%80%A0"><span class="toc-number">3.4.</span> <span class="toc-text">(四)文法构造</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E7%9F%AD%E8%AF%AD%E3%80%81%E7%AE%80%E5%8D%95%E7%9F%AD%E8%AF%AD%E5%92%8C%E5%8F%A5%E6%9F%84%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="toc-number">3.5.</span> <span class="toc-text">(五)短语、简单短语和句柄（重点）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E8%AF%AD%E6%B3%95%E6%A0%91%EF%BC%88%E6%8E%A8%E5%AF%BC%E6%A0%91%EF%BC%89"><span class="toc-number">3.6.</span> <span class="toc-text">(六)语法树（推导树）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E8%AF%AD%E6%B3%95%E6%A0%91%E4%B8%8E%E4%BA%8C%E4%B9%89%E6%80%A7%E6%96%87%E6%B3%95"><span class="toc-number">3.6.1.</span> <span class="toc-text">1、语法树与二义性文法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%AF%AD%E6%B3%95%E6%A0%91"><span class="toc-number">3.6.1.1.</span> <span class="toc-text">(1)语法树</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BA%8C%E4%B9%89%E6%80%A7%E6%96%87%E6%B3%95"><span class="toc-number">3.6.1.2.</span> <span class="toc-text">(2)二义性文法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E6%96%87%E6%B3%95%E7%9A%84%E5%85%B6%E5%AE%83%E8%A1%A8%E7%A4%BA%E6%B3%95"><span class="toc-number">3.7.</span> <span class="toc-text">(七)文法的其它表示法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB-%E4%B9%94%E5%A7%86%E6%96%AF%E5%9F%BA%E6%96%87%E6%B3%95%E4%BD%93%E7%B3%BB"><span class="toc-number">3.8.</span> <span class="toc-text">(八)乔姆斯基文法体系</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">三、词法分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="toc-number">4.1.</span> <span class="toc-text">(一)词法分析的功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%AD%A3%E5%88%99%E6%96%87%E6%B3%95%E5%92%8C%E7%8A%B6%E6%80%81%E5%9B%BE"><span class="toc-number">4.2.</span> <span class="toc-text">(二)正则文法和状态图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%BB%8E%E2%80%9C%E7%8A%B6%E6%80%81%E5%9B%BE%E2%80%9D%E5%88%B0%E2%80%9C%E6%9C%89%E7%A9%B7%E7%8A%B6%E6%80%81%E8%87%AA%E5%8A%A8%E6%9C%BA%E2%80%9D"><span class="toc-number">4.3.</span> <span class="toc-text">(三)从“状态图”到“有穷状态自动机”</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%A1%AE%E5%AE%9A%E7%9A%84%E6%9C%89%E7%A9%B7%E8%87%AA%E5%8A%A8%E6%9C%BA-DFA"><span class="toc-number">4.3.1.</span> <span class="toc-text">1、确定的有穷自动机(DFA)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E4%B8%8D%E7%A1%AE%E5%AE%9A%E7%9A%84%E6%9C%89%E7%A9%B7%E8%87%AA%E5%8A%A8%E6%9C%BA-NFA"><span class="toc-number">4.3.2.</span> <span class="toc-text">2、不确定的有穷自动机(NFA)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%9F%BA%E7%A1%80"><span class="toc-number">4.3.3.</span> <span class="toc-text">3、正则表达式基础</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-NFA%E7%9A%84%E7%A1%AE%E5%AE%9A%E5%8C%96"><span class="toc-number">4.4.</span> <span class="toc-text">(四)NFA的确定化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-DFA%E7%9A%84%E6%9E%81%E5%B0%8F%E5%8C%96"><span class="toc-number">4.5.</span> <span class="toc-text">(五)DFA的极小化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD-%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96"><span class="toc-number">4.6.</span> <span class="toc-text">(六)词法分析的自动化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83-%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%E7%A8%8B%E5%BA%8F-getSymbol"><span class="toc-number">4.7.</span> <span class="toc-text">(七)词法分析程序 getSymbol()</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">5.</span> <span class="toc-text">四、语法分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90"><span class="toc-number">5.1.</span> <span class="toc-text">(一)语法分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%88%86%E6%9E%90"><span class="toc-number">5.2.</span> <span class="toc-text">(二)自顶向下分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%88%86%E6%9E%90%E7%9A%84%E4%B8%80%E8%88%AC%E8%BF%87%E7%A8%8B"><span class="toc-number">5.2.1.</span> <span class="toc-text">1、自顶向下分析的一般过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E5%88%86%E6%9E%90%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="toc-number">5.2.2.</span> <span class="toc-text">2、自顶向下分析存在的问题及解决方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%B7%A6%E9%80%92%E5%BD%92%E6%96%87%E6%B3%95"><span class="toc-number">5.2.2.1.</span> <span class="toc-text">(1) 左递归文法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B6%88%E9%99%A4%E5%B7%A6%E9%80%92%E5%BD%92%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">5.2.2.1.1.</span> <span class="toc-text">消除左递归的方法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9B%9E%E6%BA%AF%E9%97%AE%E9%A2%98"><span class="toc-number">5.2.2.2.</span> <span class="toc-text">(2)回溯问题</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B6%88%E9%99%A4%E5%9B%9E%E6%BA%AF%E7%9A%84%E9%80%94%E5%BE%84"><span class="toc-number">5.2.2.2.1.</span> <span class="toc-text">消除回溯的途径</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E9%80%92%E5%BD%92%E5%AD%90%E7%A8%8B%E5%BA%8F%E6%B3%95%EF%BC%88%E9%80%92%E5%BD%92%E4%B8%8B%E9%99%8D%E5%88%86%E6%9E%90%E6%B3%95%EF%BC%89"><span class="toc-number">5.2.3.</span> <span class="toc-text">3、递归子程序法（递归下降分析法）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81LL-1-%E6%96%87%E6%B3%95"><span class="toc-number">5.2.4.</span> <span class="toc-text">4、LL(1)文法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-FIRST%E9%9B%86%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-number">5.2.4.1.</span> <span class="toc-text">(1)FIRST集的计算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-FOLLOW%E9%9B%86%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-number">5.2.4.2.</span> <span class="toc-text">(2)FOLLOW集的计算</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81LL-1-%E5%88%86%E6%9E%90%E6%B3%95"><span class="toc-number">5.2.5.</span> <span class="toc-text">5、LL(1)分析法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-LL%E5%88%86%E6%9E%90%E7%A8%8B%E5%BA%8F%E6%9E%84%E9%80%A0%E5%8F%8A%E5%88%86%E6%9E%90%E8%BF%87%E7%A8%8B"><span class="toc-number">5.2.5.1.</span> <span class="toc-text">(1)LL分析程序构造及分析过程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%88%86%E6%9E%90%E8%A1%A8%E7%9A%84%E6%9E%84%E9%80%A0"><span class="toc-number">5.2.6.</span> <span class="toc-text">(2)分析表的构造</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E8%87%AA%E5%BA%95%E5%90%91%E4%B8%8A%E5%88%86%E6%9E%90"><span class="toc-number">5.3.</span> <span class="toc-text">(三)自底向上分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E5%88%86%E6%9E%90-Operator-Precedence-Parsing"><span class="toc-number">5.3.1.</span> <span class="toc-text">1、算符优先分析(Operator-Precedence Parsing)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E6%96%87%E6%B3%95"><span class="toc-number">5.3.2.</span> <span class="toc-text">2、算符优先文法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81LR%E5%88%86%E6%9E%90%E6%96%B9%E6%B3%95"><span class="toc-number">5.3.3.</span> <span class="toc-text">3、LR分析方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-LR-0-%E5%88%86%E6%9E%90%E6%B3%95"><span class="toc-number">5.3.3.1.</span> <span class="toc-text">(1)LR(0)分析法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-LR-0-%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">5.3.3.2.</span> <span class="toc-text">(2)LR(0)的局限性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-LR-1-%E5%88%86%E6%9E%90%E6%B3%95"><span class="toc-number">5.3.3.3.</span> <span class="toc-text">(3)LR(1)分析法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-SLR-1-%EF%BC%9A%E7%AE%80%E5%8D%95LR%E5%88%86%E6%9E%90%E6%B3%95"><span class="toc-number">5.3.3.4.</span> <span class="toc-text">(4)SLR(1)：简单LR分析法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E2%91%A0SLR%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="toc-number">5.3.3.4.1.</span> <span class="toc-text">①SLR的基本思想</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E2%91%A1%E6%9E%84%E9%80%A0SLR%E5%88%86%E6%9E%90%E8%A1%A8"><span class="toc-number">5.3.3.4.2.</span> <span class="toc-text">②构造SLR分析表</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%AE%A1%E7%90%86%E6%8A%80%E6%9C%AF"><span class="toc-number">6.</span> <span class="toc-text">五、符号表管理技术</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0"><span class="toc-number">6.1.</span> <span class="toc-text">(一)概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%9A%84%E7%BB%84%E7%BB%87%E4%B8%8E%E5%86%85%E5%AE%B9"><span class="toc-number">6.2.</span> <span class="toc-text">(二)符号表的组织与内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84%E4%B8%8E%E5%86%85%E5%AE%B9"><span class="toc-number">6.2.1.</span> <span class="toc-text">1、符号表的结构与内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%9A%84%E7%BB%84%E7%BB%87%E6%96%B9%E5%BC%8F"><span class="toc-number">6.2.2.</span> <span class="toc-text">2、符号表的组织方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E9%9D%9E%E5%88%86%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84%E8%AF%AD%E8%A8%80%E7%9A%84%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%BB%84%E7%BB%87"><span class="toc-number">6.2.3.</span> <span class="toc-text">3、非分程序结构语言的符号表组织</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%9D%9E%E5%88%86%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84%E8%AF%AD%E8%A8%80"><span class="toc-number">6.2.3.1.</span> <span class="toc-text">(1)非分程序结构语言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%A0%87%E8%AF%86%E7%AC%A6%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%8F%8A%E5%9F%BA%E6%9C%AC%E5%A4%84%E7%90%86%E5%8A%9E%E6%B3%95"><span class="toc-number">6.2.3.2.</span> <span class="toc-text">(2)标识符的作用域及基本处理办法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%9A%84%E7%BB%84%E7%BB%87%E6%96%B9%E5%BC%8F"><span class="toc-number">6.2.3.3.</span> <span class="toc-text">(3)符号表的组织方式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E5%88%86%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84%E8%AF%AD%E8%A8%80%E7%9A%84%E7%AC%A6%E5%8F%B7%E8%A1%A8%E7%BB%84%E7%BB%87"><span class="toc-number">6.2.4.</span> <span class="toc-text">4、分程序结构语言的符号表组织</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%88%86%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84%E8%AF%AD%E8%A8%80"><span class="toc-number">6.2.4.1.</span> <span class="toc-text">(1)分程序结构语言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%A0%87%E8%AF%86%E7%AC%A6%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F%E5%92%8C%E5%9F%BA%E6%9C%AC%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95"><span class="toc-number">6.2.4.2.</span> <span class="toc-text">(2)标识符的作用域和基本处理方法</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%84%E7%BB%87%E5%8F%8A%E7%AE%A1%E7%90%86"><span class="toc-number">7.</span> <span class="toc-text">六、运行时的存储组织及管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%A6%82%E8%BF%B0-1"><span class="toc-number">7.1.</span> <span class="toc-text">(一)概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E9%9D%99%E6%80%81%E5%AD%98%E5%82%A8%E5%88%86%E9%85%8D"><span class="toc-number">7.2.</span> <span class="toc-text">(二)静态存储分配</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5"><span class="toc-number">7.2.1.</span> <span class="toc-text">1、分配策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%A8%A1%E5%9D%97-FORTRAN%E5%AD%90%E7%A8%8B%E5%BA%8F-%E7%9A%84%E5%AE%8C%E6%95%B4%E6%95%B0%E6%8D%AE%E5%8C%BA"><span class="toc-number">7.2.2.</span> <span class="toc-text">2、模块(FORTRAN子程序)的完整数据区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%8A%A8%E6%80%81%E5%AD%98%E5%82%A8%E5%88%86%E9%85%8D"><span class="toc-number">7.3.</span> <span class="toc-text">(三)动态存储分配</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E6%B4%BB%E5%8A%A8%E8%AE%B0%E5%BD%95"><span class="toc-number">7.3.1.</span> <span class="toc-text">1、活动记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%BB%BA%E9%80%A0display%E5%8C%BA%E7%9A%84%E8%A7%84%E5%88%99"><span class="toc-number">7.3.2.</span> <span class="toc-text">2、建造display区的规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E8%BF%90%E8%A1%8C%E6%97%B6%E7%9A%84%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97"><span class="toc-number">7.3.3.</span> <span class="toc-text">3、运行时的地址计算</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%BA%90%E7%A8%8B%E5%BA%8F%E7%9A%84%E4%B8%AD%E9%97%B4%E5%BD%A2%E5%BC%8F"><span class="toc-number">8.</span> <span class="toc-text">七、源程序的中间形式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%B3%A2%E5%85%B0%E8%A1%A8%E7%A4%BA"><span class="toc-number">8.1.</span> <span class="toc-text">(一)波兰表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-N%E5%85%83%E8%A1%A8%E7%A4%BA"><span class="toc-number">8.2.</span> <span class="toc-text">(二)N元表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E6%8A%BD%E8%B1%A1%E8%AF%AD%E6%B3%95%E6%A0%91"><span class="toc-number">8.3.</span> <span class="toc-text">(三)抽象语法树</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-number">9.</span> <span class="toc-text">八、错误处理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E8%AF%AD%E6%B3%95%E5%88%B6%E5%AF%BC%E7%BF%BB%E8%AF%91%E6%8A%80%E6%9C%AF"><span class="toc-number">10.</span> <span class="toc-text">九、语法制导翻译技术</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E7%BF%BB%E8%AF%91%E6%96%87%E6%B3%95%E5%92%8C%E8%AF%AD%E6%B3%95%E5%88%B6%E5%AF%BC%E7%BF%BB%E8%AF%91"><span class="toc-number">10.1.</span> <span class="toc-text">(一)翻译文法和语法制导翻译</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E8%AF%AD%E4%B9%89%E5%88%86%E6%9E%90%E5%92%8C%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90"><span class="toc-number">11.</span> <span class="toc-text">十、语义分析和代码生成</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96"><span class="toc-number">12.</span> <span class="toc-text">十一、代码优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%9F%BA%E6%9C%AC%E5%9D%97%E3%80%81%E6%B5%81%E5%9B%BE"><span class="toc-number">12.1.</span> <span class="toc-text">(一)基本块、流图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%9F%BA%E6%9C%AC%E5%9D%97"><span class="toc-number">12.1.1.</span> <span class="toc-text">1、基本块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E6%B5%81%E5%9B%BE"><span class="toc-number">12.1.2.</span> <span class="toc-text">2、流图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%95%B0%E6%8D%AE%E6%B5%81%E5%88%86%E6%9E%90"><span class="toc-number">12.2.</span> <span class="toc-text">(二)数据流分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E6%95%B0%E6%8D%AE%E6%B5%81%E5%88%86%E6%9E%90%E6%96%B9%E7%A8%8B"><span class="toc-number">12.2.1.</span> <span class="toc-text">1、数据流分析方程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%8A%B6%E6%80%81"><span class="toc-number">12.2.2.</span> <span class="toc-text">2、程序的状态</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%B1%80%E9%83%A8%E4%BC%98%E5%8C%96%EF%BC%88%E5%9F%BA%E6%9C%AC%E5%9D%97%E5%86%85%E7%9A%84%E4%BC%98%E5%8C%96%EF%BC%89"><span class="toc-number">12.3.</span> <span class="toc-text">(三)局部优化（基本块内的优化）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%88%A9%E7%94%A8%E4%BB%A3%E6%95%B0%E6%80%A7%E8%B4%A8%EF%BC%88%E4%BB%A3%E6%95%B0%E5%8F%98%E6%8D%A2%EF%BC%89"><span class="toc-number">12.3.1.</span> <span class="toc-text">1、利用代数性质（代数变换）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%B8%B8%E6%95%B0%E5%90%88%E5%B9%B6%E5%92%8C%E4%BC%A0%E6%92%AD"><span class="toc-number">12.3.2.</span> <span class="toc-text">2、常数合并和传播</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%88%A0%E9%99%A4%E5%86%97%E4%BD%99%E4%BB%A3%E7%A0%81%EF%BC%88DCE-Dead-Code-Elimination%EF%BC%89"><span class="toc-number">12.3.3.</span> <span class="toc-text">3、删除冗余代码（DCE: Dead Code Elimination）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E7%AA%A5%E5%AD%94%E4%BC%98%E5%8C%96%EF%BC%88peep-hole%EF%BC%89"><span class="toc-number">12.3.4.</span> <span class="toc-text">4、窥孔优化（peep-hole）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81%E6%B6%88%E9%99%A4%E5%85%AC%E5%85%B1%E5%AD%90%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">12.3.5.</span> <span class="toc-text">5、消除公共子表达式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E5%85%A8%E5%B1%80%E4%BC%98%E5%8C%96"><span class="toc-number">12.4.</span> <span class="toc-text">(四)全局优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E6%B4%BB%E8%B7%83%E5%8F%98%E9%87%8F%E5%88%86%E6%9E%90%EF%BC%88Liveness%EF%BC%89"><span class="toc-number">12.4.1.</span> <span class="toc-text">1、活跃变量分析（Liveness）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%85%A8%E5%B1%80%E6%AD%BB%E4%BB%A3%E7%A0%81%E5%88%A0%E9%99%A4"><span class="toc-number">12.4.2.</span> <span class="toc-text">2、全局死代码删除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%8F%AF%E8%BE%BE%E5%AE%9A%E4%B9%89%E5%88%86%E6%9E%90%EF%BC%88reaching-def%EF%BC%89"><span class="toc-number">12.4.3.</span> <span class="toc-text">3、可达定义分析（reaching def）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E5%85%A8%E5%B1%80%E5%A4%8D%E5%88%B6%E4%BC%A0%E6%92%AD%EF%BC%88%E5%B8%B8%E9%87%8F%E4%BC%A0%E6%92%AD%EF%BC%89"><span class="toc-number">12.4.4.</span> <span class="toc-text">4、全局复制传播（常量传播）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81%E5%86%B2%E7%AA%81%E5%9B%BE"><span class="toc-number">12.4.5.</span> <span class="toc-text">5、冲突图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6%E3%80%81%E6%94%AF%E9%85%8D%E5%B1%9E%E6%80%A7%EF%BC%88Dominance-Property%EF%BC%89"><span class="toc-number">12.4.6.</span> <span class="toc-text">6、支配属性（Dominance Property）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7%E3%80%81%E5%BE%AA%E7%8E%AF%E4%BC%98%E5%8C%96"><span class="toc-number">12.4.7.</span> <span class="toc-text">7、循环优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%B8%B8%E8%A7%81%E7%9A%84%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96"><span class="toc-number">12.5.</span> <span class="toc-text">(五)常见的编译优化</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E7%9B%AE%E6%A0%87%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90"><span class="toc-number">13.</span> <span class="toc-text">十二、目标代码生成</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E6%8C%87%E4%BB%A4%E9%9B%86%E6%9E%B6%E6%9E%84"><span class="toc-number">13.1.</span> <span class="toc-text">(一)指令集架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="toc-number">13.2.</span> <span class="toc-text">(二)地址空间</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E5%88%86%E9%85%8D%E5%92%8C%E6%8C%87%E6%B4%BE"><span class="toc-number">13.3.</span> <span class="toc-text">(三)寄存器的分配和指派</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%AF%84%E5%AD%98%E5%99%A8%E5%88%86%E9%85%8D%EF%BC%9A%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0"><span class="toc-number">13.3.1.</span> <span class="toc-text">1、寄存器分配：引用计数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%AF%84%E5%AD%98%E5%99%A8%E5%88%86%E9%85%8D%EF%BC%9A%E7%BA%BF%E6%80%A7%E6%89%AB%E6%8F%8F"><span class="toc-number">13.3.2.</span> <span class="toc-text">2、寄存器分配：线性扫描</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%AF%84%E5%AD%98%E5%99%A8%E5%88%86%E9%85%8D%EF%BC%9A%E5%9B%BE%E7%9D%80%E8%89%B2%E7%AE%97%E6%B3%95"><span class="toc-number">13.3.3.</span> <span class="toc-text">3、寄存器分配：图着色算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E5%AF%84%E5%AD%98%E5%99%A8%E5%88%86%E9%85%8D%EF%BC%9A%E4%B8%B4%E6%97%B6%E5%AF%84%E5%AD%98%E5%99%A8%E5%88%86%E9%85%8D"><span class="toc-number">13.3.4.</span> <span class="toc-text">4、寄存器分配：临时寄存器分配</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%8C%87%E4%BB%A4%E9%80%89%E6%8B%A9"><span class="toc-number">13.4.</span> <span class="toc-text">(四)指令选择</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/11/17/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%90%86%E8%AE%BA/" title="数据库理论"><img src="/img/default_cover1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据库理论"/></a><div class="content"><a class="title" href="/2022/11/17/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%90%86%E8%AE%BA/" title="数据库理论">数据库理论</a><time datetime="2022-11-17T15:55:19.000Z" title="Created 2022-11-17 23:55:19">2022-11-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/17/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA/" title="形式语言与自动机理论"><img src="/img/default_cover1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="形式语言与自动机理论"/></a><div class="content"><a class="title" href="/2022/11/17/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA/" title="形式语言与自动机理论">形式语言与自动机理论</a><time datetime="2022-11-17T15:54:59.000Z" title="Created 2022-11-17 23:54:59">2022-11-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/17/%E7%BC%96%E8%AF%91%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/" title="编译技术笔记"><img src="/img/default_cover5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="编译技术笔记"/></a><div class="content"><a class="title" href="/2022/11/17/%E7%BC%96%E8%AF%91%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0/" title="编译技术笔记">编译技术笔记</a><time datetime="2022-11-17T15:54:16.000Z" title="Created 2022-11-17 23:54:16">2022-11-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/15/Django%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/" title="Django后端开发"><img src="/img/default_cover1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Django后端开发"/></a><div class="content"><a class="title" href="/2022/11/15/Django%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91/" title="Django后端开发">Django后端开发</a><time datetime="2022-11-15T00:11:05.000Z" title="Created 2022-11-15 08:11:05">2022-11-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/10/04/LeNet-5/" title="LeNet-5"><img src="/img/default_cover5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeNet-5"/></a><div class="content"><a class="title" href="/2022/10/04/LeNet-5/" title="LeNet-5">LeNet-5</a><time datetime="2022-10-04T12:24:55.000Z" title="Created 2022-10-04 20:24:55">2022-10-04</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('/img/default_cover5.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 玖曦</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading the Database</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="/js/search/local-search.js"></script><script>var preloader = {
   endLoading: () => {
     document.body.style.overflow = 'auto';
     document.getElementById('loading-box').classList.add("loaded")
